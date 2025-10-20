@@ -5,6 +5,7 @@ import string
 import json
 import subprocess
 import re
+import os
 from datetime import datetime
 from pathlib import Path
 from playwright.async_api import async_playwright, TimeoutError as PlaywrightTimeout
@@ -12,6 +13,28 @@ import threading
 import time
 
 app = Flask(__name__)
+
+# Ensure Chromium is installed on startup
+def ensure_browser_installed():
+    """Install Chromium browser if not already installed"""
+    try:
+        print("🔍 Checking for Chromium installation...")
+        result = subprocess.run(
+            ["python", "-m", "playwright", "install", "chromium"],
+            capture_output=True,
+            text=True,
+            timeout=300,
+            env={**os.environ, "PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS": "true"}
+        )
+        if "downloaded" in result.stdout.lower() or "installed" in result.stdout.lower():
+            print("✅ Chromium installed successfully")
+        else:
+            print("✅ Chromium already installed")
+    except Exception as e:
+        print(f"⚠️ Browser check failed: {e}")
+
+# Install browser on startup
+ensure_browser_installed()
 
 # Global state for tracking scraping status
 scraping_state = {
