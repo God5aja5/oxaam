@@ -7,7 +7,9 @@ services:
     buildCommand: |
       pip install --upgrade pip
       pip install -r requirements.txt
+      echo "Installing Chromium browser..."
       PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS=true python -m playwright install chromium
+      echo "Chromium installation complete!"
     startCommand: gunicorn --bind 0.0.0.0:$PORT --workers 1 --threads 2 --timeout 240 app:app
     envVars:
       - key: PLAYWRIGHT_BROWSERS_PATH
