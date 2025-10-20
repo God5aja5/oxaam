@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: oxaam-scraper-api
+    env: python
+    runtime: python-3.11.0
+    region: oregon
+    plan: free
+    buildCommand: |
+      pip install --upgrade pip
+      pip install -r requirements.txt
+      playwright install-deps
+      playwright install chromium
+    startCommand: gunicorn --bind 0.0.0.0:$PORT --workers 1 --threads 2 --timeout 240 app:app
+    envVars:
+      - key: PLAYWRIGHT_BROWSERS_PATH
+        value: /opt/render/.cache/ms-playwright
+      - key: PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD
+        value: "0"
